@@ -15,9 +15,9 @@ A curated collection of dynamic, ready-to-use Vagrant environments for VirtualBo
 | Virtualization Layer | <-- VirtualBox
 └───────┬──────────────┘
         │
-┌───────┴──────┬──────────────┬──────────────────┬─────────────┐
-| Ubuntu Nodes | CentOS Nodes | Kubernetes Nodes | Other Nodes |
-└──────────────┴──────────────┴──────────────────┴─────────────┘
+┌───────┴──────┬──────────────┬────────────┬───────┐
+| Ubuntu Nodes | CentOS Nodes | Kubernetes | Other |
+└──────────────┴──────────────┴────────────┴───────┘
 ```
 
 ## 🚀 What's Inside?
@@ -27,10 +27,11 @@ Each subdirectory represents a Vagrant environment with a dynamic `Vagrantfile`:
 ### 📦 Base Environments
 
 - `ubuntu/` - Ubuntu-based environment
+- `centos/` - Centos-based environment
 
 ### 📦 📦 Cluster Packs
 
-- `k8s-cluster/` - Kubernetes multi-node cluster
+- `kubernetes/` - Kubernetes multi-node cluster
 
 ## 🚀 Getting Started
 

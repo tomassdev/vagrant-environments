@@ -1,0 +1,2 @@
+# Ignore all Vagrant local state folders
+**/.vagrant/

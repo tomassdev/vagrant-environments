@@ -1,5 +1,5 @@
 NODES = {
-  'ubuntu-1' => {
+  'centos-1' => {
     ip: '192.168.1.10',
     ports: {
       'ssh' => { guest: 22, host: 2222 }
@@ -11,8 +11,8 @@ NODES = {
 }
 
 Vagrant.configure("2") do |config|
-  # https://portal.cloud.hashicorp.com/vagrant/discover/bento/ubuntu-24.04
-  config.vm.box = "bento/ubuntu-24.04"
+  # https://portal.cloud.hashicorp.com/vagrant/discover/bento/centos-stream-10
+  config.vm.box = "bento/centos-stream-10"
   config.vm.box_version = "202502.21.0"
 
   NODES.each do |node_name, node_config|
