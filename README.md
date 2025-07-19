@@ -32,6 +32,7 @@ Each subdirectory represents a Vagrant environment with a dynamic `Vagrantfile`:
 ### 📦 📦 Cluster Packs
 
 - `kubernetes/` - Kubernetes multi-node cluster
+- `docker-swarm/` - Docker swarm multi-node cluster
 
 ## 🚀 Getting Started
 
