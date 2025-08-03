@@ -26,8 +26,9 @@ Each subdirectory represents a Vagrant environment with a dynamic `Vagrantfile`:
 
 ### 📦 Base Environments
 
-- `ubuntu/` - Ubuntu-based environment
 - `centos/` - Centos-based environment
+- `debian/` - Centos-based environment
+- `ubuntu/` - Ubuntu-based environment
 
 ### 📦 📦 Cluster Packs
 
