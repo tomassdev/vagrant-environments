@@ -13,7 +13,7 @@ NODES = {
 Vagrant.configure("2") do |config|
   # https://portal.cloud.hashicorp.com/vagrant/discover/bento/ubuntu-24.04
   config.vm.box = "bento/ubuntu-24.04"
-  config.vm.box_version = "202502.21.0"
+  config.vm.box_version = "202508.03.0"
 
   NODES.each do |node_name, node_config|
     config.vm.define node_name do |node|
