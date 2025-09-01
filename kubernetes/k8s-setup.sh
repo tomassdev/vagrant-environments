@@ -1,18 +1,18 @@
 #!/bin/bash
 set -euo pipefail
 
-# Setup Kubernetes Cluster v1.33
+# Setup Kubernetes Cluster v1.34
 # Note: Installation steps may vary depending on the Kubernetes version
 # Reference: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
 
 # https://kubernetes.io/releases/
-readonly K8S_VERSION="v1.33"
+readonly K8S_VERSION="v1.34"
 # https://github.com/projectcalico/calico/releases
-readonly K8S_CALICO_VERSION="v3.30.2"
+readonly K8S_CALICO_VERSION="v3.30.3"
 readonly K8S_POD_NETWORK_CIDR="192.168.64.0/18"
 readonly K8S_API_SERVER_EXTRA_SANS="127.0.0.1,localhost"
 # https://kubernetes.io/docs/setup/production-environment/container-runtimes/#containerd
-readonly CONTAINERD_SANDBOX_IMAGE="registry.k8s.io/pause:3.10"
+readonly CONTAINERD_SANDBOX_IMAGE="registry.k8s.io/pause:3.10.1"
 readonly CURRENT_HOST=$(hostname)
 readonly CURRENT_IP=$(echo "${NODE_IPS}" | tr ',' '\n' | grep "${CURRENT_HOST}" | awk '{print $1}')
 
