@@ -5,19 +5,19 @@
 A curated collection of dynamic, ready-to-use Vagrant environments for VirtualBox. This repository provides flexible `Vagrantfile` setups that support both **single** and **multi-node** configurations, enabling quick provisioning of development, test, or lab environments — from minimal VMs to full multi-node clusters.
 
 ```
-┌──────────────┐
-| Host Machine |
-|  (Vagrant)   |
-└───────┬──────┘
+┌───────────────┐
+| Host Machine  |
+|   (Vagrant)   |
+└───────┬───────┘
         │
-        v
-┌──────────────────────┐
-| Virtualization Layer | <-- VirtualBox
+┌───────┴──────────────┐
+| Virtualization Layer |
+|     (VirtualBox)     |
 └───────┬──────────────┘
         │
-┌───────┴──────┬──────────────┬────────────┬───────┐
-| Ubuntu Nodes | CentOS Nodes | Kubernetes | Other |
-└──────────────┴──────────────┴────────────┴───────┘
+┌───────┴────────────────────┬─────────────────────────┐
+| Centos/Debian/Ubuntu Nodes | Docker Swarm/Kubernetes |
+└────────────────────────────┴─────────────────────────┘
 ```
 
 ## 🚀 What's Inside?
@@ -41,7 +41,7 @@ Each subdirectory represents a Vagrant environment with a dynamic `Vagrantfile`:
 
 - 🐱 **Host OS:** Linux, macOS, or Windows
 - 📦 **Vagrant:** 2.4.x or newer
-- 🖥️ **VirtualBox:** 7.1.x or newer
+- 🖥️ **VirtualBox:** 7.2.x or newer
 
 ## ⚙️ Usage
 
@@ -58,20 +58,24 @@ The environment will spin up one or more VMs based on the `NODES` definition ins
 ```ruby
 NODES = {
   'node-1' => {
-    ip: '192.168.56.10',
+    ip: '192.168.10.10',
     ports: {
       'ssh' => { guest: 22, host: 2222 }
     },
     cpus: 2,
-    memory: 2048
+    memory: 2048,
+    disk_size: "64GB",
+    synced_folder: false
   },
   'node-2' => {
-    ip: '192.168.56.11',
+    ip: '192.168.10.11',
     ports: {
       'ssh' => { guest: 22, host: 2223 }
     },
     cpus: 2,
-    memory: 2048
+    memory: 2048,
+    disk_size: "64GB",
+    synced_folder: false
   }
 }
 ```
