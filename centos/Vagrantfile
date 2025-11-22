@@ -14,7 +14,7 @@ NODES = {
 Vagrant.configure("2") do |config|
   # https://portal.cloud.hashicorp.com/vagrant/discover/bento/centos-stream-10
   config.vm.box = "bento/centos-stream-10"
-  config.vm.box_version = "202508.03.0"
+  config.vm.box_version = "202510.26.0"
 
   NODES.each do |node_name, node_config|
     config.vm.define node_name do |node|
