@@ -7,8 +7,8 @@ set -euo pipefail
 
 # https://kubernetes.io/releases/
 readonly K8S_VERSION="v1.35"
-# https://github.com/projectcalico/calico/releases
-readonly K8S_CALICO_VERSION="v3.31.3"
+# https://github.com/cilium/cilium/releases
+readonly K8S_CILIUM_VERSION="1.18.5"
 readonly K8S_POD_NETWORK_CIDR="192.168.64.0/18"
 readonly K8S_API_SERVER_EXTRA_SANS="127.0.0.1,localhost"
 # https://kubernetes.io/docs/setup/production-environment/container-runtimes/#containerd
@@ -78,29 +78,38 @@ if [[ "${CURRENT_HOST}" == "control-plane" ]]; then
       --pod-network-cidr="${K8S_POD_NETWORK_CIDR}" \
       --apiserver-cert-extra-sans="${K8S_API_SERVER_EXTRA_SANS}"
 
+  # Configure admin profile
   echo "==> Configuring the admin profile"
   export KUBECONFIG=/etc/kubernetes/admin.conf
 
-  echo "==> Installing network add-on: Calico"
-  kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/${K8S_CALICO_VERSION}/manifests/operator-crds.yaml
-  kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/${K8S_CALICO_VERSION}/manifests/tigera-operator.yaml
-  curl -s "https://raw.githubusercontent.com/projectcalico/calico/${K8S_CALICO_VERSION}/manifests/custom-resources.yaml" | \
-      sed "s|192.168.0.0/16|${K8S_POD_NETWORK_CIDR}|g" | \
-      kubectl apply -f -
+  # Install Cilium network add-on
+  echo "==> Installing network add-on: Cilium"
+  CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
+  CLI_ARCH=amd64
+  if [ "$(uname -m)" = "aarch64" ]; then CLI_ARCH=arm64; fi
+  curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+  sha256sum --check cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
+  sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
+  rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+  cilium install --version ${K8S_CILIUM_VERSION}
 
+  # Install Metrics Server
   echo "==> Installing Metrics Server"
   curl -sL https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml | \
     sed 's/- args:/- args:\n        - --kubelet-insecure-tls/' | \
     kubectl apply -f -
 
+  # Generate join command for worker nodes
   echo "==> Generating join command for worker nodes"
   kubeadm token create --print-join-command > /tmp/join.sh
 
+  # Start a simple server to serve the join command
   echo "==> Starting join command server"
   while true; do
       nc -l 8080 < /tmp/join.sh
   done &
 else
+    # Join Kubernetes worker node to the cluster
     echo "==> Joining Kubernetes ${CURRENT_HOST} ${CURRENT_IP} to the cluster"
     until nc -z control-plane 6443; do
         echo "Waiting for control plane API"
