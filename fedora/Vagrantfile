@@ -1,0 +1,47 @@
+NODES = {
+  'fedora-1' => {
+    ip: '192.168.10.10',
+    ports: {
+      'ssh' => { guest: 22, host: 2222 }
+    },
+    cpus: 2,
+    memory: 2048,
+    disk_size: "64GB",
+    synced_folder: false
+  }
+}
+
+Vagrant.configure("2") do |config|
+  # https://portal.cloud.hashicorp.com/vagrant/discover/bento/fedora-latest
+  config.vm.box = "bento/fedora-latest"
+  config.vm.box_version = "202511.16.0"
+
+  NODES.each do |node_name, node_config|
+    config.vm.define node_name do |node|
+      node.vm.hostname = node_name
+
+      # Configure the network
+      node.vm.network "private_network", ip: node_config[:ip], auto_config: true, virtualbox__intnet: true
+      node_config[:ports].each do |id, port_config|
+        node.vm.network "forwarded_port", id: id, guest: port_config[:guest], host: port_config[:host]
+      end
+
+      # Configure the hardware
+      node.vm.provider "virtualbox" do |vb|
+        vb.name = node_name
+        vb.cpus = node_config[:cpus]
+        vb.memory = node_config[:memory]
+      end
+
+      # Configure a primary disk
+      node.vm.disk :disk, size: node_config[:disk_size], primary: true
+
+      # Configure the default /vagrant shared folder
+      node.vm.synced_folder ".", "/vagrant", disabled: !node_config[:synced_folder]
+
+      # Configure hostname resolution
+      node.vm.provision "shell",
+        inline: NODES.map { |name, cfg| "echo '#{cfg[:ip]} #{name}' >> /etc/hosts" }.join("\n")
+    end
+  end
+end
